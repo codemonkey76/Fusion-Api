@@ -50,6 +50,7 @@ DB2_PASSWORD=fusionpbx
 ```
 
 ###Set fusionpbx password
+```
 sed -i "s/DB2_PASSWORD.*$/DB2_PASSWORD=$(cat /etc/fusionpbx/config.php | grep '$db_password
  = ' | awk -F\' '{print $2}')/g" .env
 ```
