@@ -1,30 +1,58 @@
 ##Instructions
 
-Login to fusionpbx server as root and clone this repo into /var/www/fusionapi, and give www-data user ownership
-
+###Login to fusionpbx server as root and clone this repo into /var/www/fusionapi, and give www-data user ownership
 ```
 sudo su
 git clone https://github.com/codemonkey76/Fusion-Api.git /var/www/fusionapi
 chown -R www-data:www-data /var/www/fusionapi
 ```
-
-Install composer
-
+###Install dependencies
 ```
-apt-get install composer
+apt-get install mariadb-server
 ```
 
-
-Install composer dependencies and generate app key
-
+###Install composer
 ```
+php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+php -r "if (hash_file('sha384', 'composer-setup.php') === '906a84df04cea2aa72f40b5f787e49f22d4c2f19492ac310e8cba5b96ac8b64115ac402c8cd292b8a03482574915d1a8') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+php composer-setup.php --install-dir=/usr/bin --filename=composer
+php -r "unlink('composer-setup.php');"
+```
+
+###Install composer dependencies and generate app key
+```
+su -l www-data -s /bin/bash
 cd /var/www/fusionapi
 cp .env.example .env
 composer install
 php artisan key:generate
 ```
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+###Setup database
+```
+mysql
+create database fusionapi;
+create user 'fusionapi'@'localhost' identified by 'secret';
+grant all privilieges on fusionapi.* to 'fusionapi'@'localhost';
+flush privileges;
+exit
+```
+
+###Setup .env file using your favorite editor set the following fields
+```
+DB_DATABASE=fusionapi
+DB_USERNAME=fusionapi
+DB_PASSWORD=secret
+...
+DB2_DATABASE=fusionpbx
+DB2_USERNAME=fusionpbx
+DB2_PASSWORD=fusionpbx
+```
+
+###Set fusionpbx password
+sed -i "s/DB2_PASSWORD.*$/DB2_PASSWORD=$(cat /etc/fusionpbx/config.php | grep '$db_password
+ = ' | awk -F\' '{print $2}')/g" .env
+```
 
 ##Step 1. Create nginx config file
 Step 1. Create nginx config file in /etc/nginx/sites-available/fusionapi
