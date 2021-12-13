@@ -56,6 +56,16 @@ sed -i "s/DB2_PASSWORD.*$/DB2_PASSWORD=$(cat /etc/fusionpbx/config.php | grep '$
  = ' | awk -F\' '{print $2}')/g" .env
 ```
 
+### Create user account on the API
+```
+php artisan tinker
+User::create([
+        'name' => 'Your Name',
+        'email' => 'your@email.address',
+        'password' => bcrypt('your password')
+]);
+```
+
 ### Step 1. Create nginx config file
 Step 1. Create nginx config file in /etc/nginx/sites-available/fusionapi
 ```
