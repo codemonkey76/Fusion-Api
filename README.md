@@ -1,5 +1,29 @@
 ##Instructions
 
+Login to fusionpbx server as root and clone this repo into /var/www/fusionapi, and give www-data user ownership
+
+```
+sudo su
+git clone https://github.com/codemonkey76/Fusion-Api.git /var/www/fusionapi
+chown -R www-data:www-data /var/www/fusionapi
+```
+
+Install composer
+
+```
+apt-get install composer
+```
+
+
+Install composer dependencies and generate app key
+
+```
+cd /var/www/fusionapi
+cp .env.example .env
+composer install
+php artisan key:generate
+```
+
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
 ##Step 1. Create nginx config file
